@@ -1,4 +1,4 @@
-Jedipedia links
+Jedipedia functions (jplinks is a legacy name, originally it only had linking functions)
 
 Miscellanous commands for Manick's PHP-IRC, used in #jedipedia on freenode. Shouldn't be difficult to port for other IRC bots, as it's very simple.
 
