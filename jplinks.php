@@ -130,17 +130,18 @@ class jplinks extends module {
 	
 	public function hiall($line)
 	{
-		$members = $this->ircClass->getChannelData($line['to'])->$memberList;
-		$message = "Hei ";
-		foreach ($members as $nick) {
+		$members = $this->ircClass->getChannelData($line['to'])->memberList;
+		$message = "Hei";
+		foreach ($members as $member) {
 			/* ignore ChanServ and bot itself */
-			if ($nick == "ChanServ" || $nick == $this->ircClass->getNick()) {
-				return;
+			if ($member->nick == "chanserv" || $member->nick == strtolower($this->ircClass->getNick())) {
+				continue;
 			} else {
-				$message = $message.$nick.", ";
+				$nick = $member->nick;
+				$message = $message.", ".$nick;
 			}
 		}
-		$this->ircClass->privMsg($line['to'], $message);
+		$this->ircClass->privMsg($line['to'], $message."!");
 	}
 }
 
