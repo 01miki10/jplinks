@@ -1,14 +1,27 @@
 <?php
 /**
  * Jedipedia functions 
- * @author --miki--@Jedipedia
+ * @author 01miki10
  * @version 2.0
- * @license GPL 3.0 or later
+ * @copyright GPL 3.0 or later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 class jplinks extends module {
 	public $title = "Jedipedia functions";
-	public $author = "--miki--@Jedipedia";
+	public $author = "01miki10";
 	public $version = "2.0";
 	
 	/* link functions */
@@ -24,6 +37,8 @@ class jplinks extends module {
 		switch ($line['to'])
 		{
 			case "#wookieepedia":
+			case "#wookieepedia-social":
+			case "#wookieepedia-spoilers":
 				$link = "https://starwars.fandom.com/wiki/";
 				break;
 			case "#darthipedia":
@@ -80,7 +95,7 @@ class jplinks extends module {
 				$link = "https://fi.wikipedia.org/wiki/";
 				break;
 			case "!hiki":
-				$link = "http://hikipedia.info/wiki/";
+				$link = "https://hiki.pedia.ws/wiki/";
 				break;
 			case "!wikia":
 			case "!fandom":
@@ -125,7 +140,7 @@ class jplinks extends module {
 			return;
 		}
 		/* FIXME: should probably be stored in a separate file instead of hardcoded value */
-		$this->ircClass->privMsg($line['to'], "ashley, miki, xwing");
+		$this->ircClass->privMsg($line['to'], "ashley, miki");
 	}
 	
 	public function hiall($line)
@@ -134,10 +149,8 @@ class jplinks extends module {
 		$message = "Hei";
 		foreach ($members as $member) {
 			/* ignore ChanServ and bot itself */
-			if ($member->nick == "chanserv" || $member->nick == strtolower($this->ircClass->getNick())) {
-				continue;
-			} else {
-				$nick = $member->nick;
+			if ($member->realNick != "ChanServ" && $member->realNick != $this->ircClass->getNick()) {
+				$nick = $member->realNick;
 				$message = $message.", ".$nick;
 			}
 		}
