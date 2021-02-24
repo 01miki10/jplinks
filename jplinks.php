@@ -27,12 +27,6 @@ class jplinks extends module {
 	/* link functions */
 	public function wikilink($line, $args)
 	{
-		/* return instructions, if no arguments */
-		if ($args['nargs'] < 1)
-		{
-			$this->ircClass->notice($line['fromNick'], 'Käyttö: !wiki <sivu>');
-			return;
-		}
 		/* define URL based on channel */
 		switch ($line['to'])
 		{
@@ -51,7 +45,7 @@ class jplinks extends module {
 				$link = "http://www.shoutwiki.com/wiki/";
 				break;
 			default:
-				$link = "http://fi.starwars.shoutwiki.com/wiki/";
+				$link = "http://www.jedipedia.fi/wiki/";
 				break;
 		}
 		$page = $this->parseTitle($args['query']);
@@ -60,18 +54,11 @@ class jplinks extends module {
 	}
 	public function makelink($line, $args)
 	{
-		/* return instructions, if no arguments */
-		if ($args['nargs'] < 1)
-		{
-			$this->ircClass->notice($line['fromNick'], 'Käyttö: '.$args['cmd'].' <sivu>');
-			return;
-		}
-		
 		/* define URL based on command */
 		switch ($args['cmd'])
 		{
 			case "!jedi":
-				$link = "http://fi.starwars.shoutwiki.com/wiki/";
+				$link = "http://www.jedipedia.fi/wiki/";
 				break;
 			case "!fanon":
 				$link = "http://fi.swfanon.shoutwiki.com/wiki/";
@@ -100,6 +87,22 @@ class jplinks extends module {
 			case "!wikia":
 			case "!fandom":
 				$link = "https://starwars.fandom.com/fi/wiki/";
+				break;
+			case "!uncyc":
+				$link = "https://en.uncyclopedia.org/wiki/";
+				break;
+			case "!brick":
+			case "!lego":
+				$link = "https://en.brickimedia.org/wiki/";
+				break;
+			case "!phab":
+				$link = "https://phabricator.shoutwiki.com/";
+				break;
+			case "!mw":
+				$link = "https://www.mediawiki.org/wiki/";
+				break;
+			case "!gerrit":
+				$link = "https://gerrit.wikimedia.org/r/";
 				break;
 			/* this should never be executed, but just in case */
 			default:
