@@ -24,12 +24,14 @@ class jplinks extends module {
 	public $author = "01miki10";
 	public $version = "2.0";
 	
+	public function init() {
+		$this->adminList = new ini("modules/jplinks/admins.ini");
+	}
+	
 	/* link functions */
-	public function wikilink($line, $args)
-	{
+	public function wikilink($line, $args) {
 		/* define URL based on channel */
-		switch ($line['to'])
-		{
+		switch ($line['to']) {
 			case "#wookieepedia":
 			case "#wookieepedia-social":
 			case "#wookieepedia-spoilers":
@@ -52,8 +54,8 @@ class jplinks extends module {
 		/* return full URL */
 		$this->ircClass->privMsg($line['to'], $link.$page);
 	}
-	public function makelink($line, $args)
-	{
+	
+	public function makelink($line, $args) {
 		/* define URL based on command */
 		switch ($args['cmd'])
 		{
@@ -106,7 +108,7 @@ class jplinks extends module {
 				break;
 			/* this should never be executed, but just in case */
 			default:
-				$this->ircClass->privMsg($line['to'], "Tunnistamaton komento");
+				$this->ircClass->privMsg($line['to'], "Unknown command");
 				return;
 		}
 		$page = $this->parseTitle($args['query']);
@@ -119,35 +121,43 @@ class jplinks extends module {
 		return str_replace(" ", "_", $page);
 	}
 	
-	public function kriff($line, $args)
-	{
-		if ($args['nargs'] < 1)
-		{
-			$this->ircClass->privMsg($line['to'], "Kriff mitä sithiä!");
+	public function kriff($line, $args) {
+		if ($line['to'] == '#jedipedia') {
+			if ($args['nargs'] < 1) {
+				$this->ircClass->privMsg($line['to'], "Kriff mitä sithiä!");
+			} else {
+				$this->ircClass->privMsg($line['to'], $args['query'].", kriff mitä sithiä!");
+			}
 		}
-		else
-		{
-			$this->ircClass->privMsg($line['to'], $args['query'].", kriff mitä sithiä!");
+		else {
+			if ($args['nargs'] < 1) {
+				$this->ircClass->privMsg($line['to'], "Kriff this sith!");
+			} else {
+				$this->ircClass->privMsg($line['to'], $args['query'].", kriff this sith!");
+			}
 		}
 	}
 	
-	public function no($line)
-	{
+	public function no($line) {
 		$this->ircClass->privMsg($line['to'], "NOOOOOOOOO!");
 	}
 	
-	public function admins($line)
-	{
-		/* only #jedipedia for now */
-		if ($line['to'] != "#jedipedia") {
-			return;
+	public function admins($line) {
+		$admins = $this->adminList->getSection($line['to']);
+		$message = "";
+		if ($admins !== false) {
+			foreach ($admins as $nick => $foo) {
+				if ($message == "") {
+					$message = $nick;
+				} else {
+					$message = $message.", ".$nick;
+				}
+			}
+			$this->ircClass->privMsg($line['to'], $message);
 		}
-		/* FIXME: should probably be stored in a separate file instead of hardcoded value */
-		$this->ircClass->privMsg($line['to'], "ashley, miki");
 	}
 	
-	public function hiall($line)
-	{
+	public function hiall($line) {
 		$members = $this->ircClass->getChannelData($line['to'])->memberList;
 		$message = "Hei";
 		foreach ($members as $member) {
