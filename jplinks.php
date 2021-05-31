@@ -2,7 +2,7 @@
 /**
  * Jedipedia functions 
  * @author 01miki10
- * @version 2.0
+ * @version 2.1
  * @copyright GPL 3.0 or later
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,8 +33,6 @@ class jplinks extends module {
 		/* define URL based on channel */
 		switch ($line['to']) {
 			case "#wookieepedia":
-			case "#wookieepedia-social":
-			case "#wookieepedia-spoilers":
 				$link = "https://starwars.fandom.com/wiki/";
 				break;
 			case "#darthipedia":
@@ -53,6 +51,34 @@ class jplinks extends module {
 		$page = $this->parseTitle($args['query']);
 		/* return full URL */
 		$this->ircClass->privMsg($line['to'], $link.$page);
+	}
+	
+	public function parseWikilink($line, $args) {
+		if ($line['to'] == "#wookieepedia") {
+			$link = "https://starwars.fandom.com/wiki/";
+		} elseif ($line['to'] == "#jedipedia") {
+			$link = "http://www.jedipedia.fi/wiki/";
+		} else {
+			return;
+		}
+		$linkReg = "\[\[[^\]]+\]\]";
+		$templateReg = "\{\{[^\}]+\}\}";
+		if (preg_match_all("/$linkReg/", $line['text'], $matches)) {
+			foreach ($matches[0] as $match) {
+				$page = str_replace("[[", "", $match);
+				$page = str_replace("]]", "", $page);
+				$page = $this->parseTitle($page);
+				$this->ircClass->privMsg($line['to'], $link.$page);
+			}
+		}
+		if (preg_match_all("/$templateReg/", $line['text'], $matches)) {
+			foreach ($matches[0] as $match) {
+				$page = str_replace("{{", "", $match);
+				$page = str_replace("}}", "", $page);
+				$page = $this->parseTitle($page);
+				$this->ircClass->privMsg($line['to'], $link."Template:".$page);
+			}
+		}
 	}
 	
 	public function makelink($line, $args) {
